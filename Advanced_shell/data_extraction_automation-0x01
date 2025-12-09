@@ -1,0 +1,13 @@
+#!/bin/bash
+source ./apiAutomation-0x00
+
+NAME=$(jq -r '.name' <data.json | sed 's/^\(.\)/\U\1/')
+HEIGHT=$(jq -r '.height' <data.json)
+WEIGHT=$(jq -r '.weight' <data.json)
+TYPE=$(jq -r '.types[0]["type"]["name"]' <data.json | sed 's/^\(.\)/\U\1/')
+
+
+awk -v name="$NAME" -v height="$HEIGHT" -v weight="$WEIGHT" -v type="$TYPE" '
+BEGIN {
+    print name " is of type " type ", weight " weight ", and is " height "m tall"
+}'
