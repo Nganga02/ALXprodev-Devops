@@ -14,7 +14,7 @@ echo "Name,Height (m),Weight (kg)" > "$OUTPUT_FILE"
 
 for POKEMON_FILE in "$POKEMON_DIR"/*; do
     if [ -f "$POKEMON_FILE" ]; then
-        NAME=$(jq -r '.name' "$POKEMON_FILE")
+        NAME=$(jq -r '.name' "$POKEMON_FILE" | sed 's/^\(.\)/\U\1/')
         HEIGHT=$(jq -r '.height /10.0' "$POKEMON_FILE")
         WEIGHT=$(jq -r '.weight / 10.0' "$POKEMON_FILE")
     fi
@@ -23,4 +23,4 @@ for POKEMON_FILE in "$POKEMON_DIR"/*; do
 done
 
 
-awk -F',' 'NR > 1 {sum1 += $2; sum2 += $3; count++} END {if (count > 0) printf("Average Height: %.2f m\nAverage Weight 3: %.2f kg\n", sum1/count, sum2/count)}' "$OUTPUT_FILE"
+awk -F',' 'NR > 1 {sum1 += $2; sum2 += $3; count++} END {if (count > 0) printf("Average Height: %.2f m\nAverage Weight: %.2f kg\n", sum1/count, sum2/count)}' "$OUTPUT_FILE"
