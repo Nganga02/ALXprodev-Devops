@@ -1,0 +1,43 @@
+#!/bin/bash
+
+POKEMON_DIR="./pokemon_data"
+POKEMONS=( "bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon" )
+
+if [ ! -d "$POKEMON_DIR" ]; then
+    mkdir $POKEMON_DIR
+fi
+
+fetch_pokemon() {
+    local pokemon="$1"
+    local output_file="$2"
+    local attempt=1
+    local max_attempts=3
+
+    while [ "$attempt" -le "$max_attempts" ]; do
+        echo "Attempt $attempt: Fetching pokemon"
+
+        source ./apiAutomation-0x00
+
+        if [ "$response" -eq 200 ]; then
+            echo "Success retrieving pokemon $pokemon"
+            return 0
+        fi
+
+        echo "request failed with status $response"
+        attempt+= 1 
+        sleep 1
+    done
+
+    #Upon failed attempt after more than 3 attempts
+    echo "[$(date)] ERROR fetching $pokemon after 3 attempts (status $response)" >> "$ERROR_FILE"
+    echo "Skipping $pokemon due to repeated failures."
+    return 1
+}
+
+for POKEMON in "${POKEMONS[@]}"; do
+    OUTPUT_FILE="$POKEMON_DIR/$POKEMON.json"
+    fetch_pokemon "$POKEMON" "$OUTPUT_FILE" &
+done
+
+wait
+echo "All items fetched"
