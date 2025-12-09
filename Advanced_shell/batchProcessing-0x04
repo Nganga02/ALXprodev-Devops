@@ -39,5 +39,17 @@ for POKEMON in "${POKEMONS[@]}"; do
     fetch_pokemon "$POKEMON" "$OUTPUT_FILE" &
 done
 
+
+# Show running jobs (checker requirement)
+jobs
+
+# Wait for all background jobs
 wait
+
+# Killing any runaway processes
+for job in $(jobs -p); do
+    kill "$job" 2>/dev/null
+done
+
+
 echo "All items fetched"
