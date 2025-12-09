@@ -1,0 +1,26 @@
+#!/bin/bash
+POKEMON_DIR="./pokemon_data"
+
+if [ -d "/summary" ]; then
+    mkdir summary
+fi
+
+OUTPUT_FILE="./summary/pokemon_report.csv"
+
+echo "CSV Report generated at: $OUTPUT_FILE"
+
+#accessing a file from the folders
+echo "Name,Height (m),Weight (kg)" > "$OUTPUT_FILE"
+
+for POKEMON_FILE in "$POKEMON_DIR"/*; do
+    if [ -f "$POKEMON_FILE" ]; then
+        NAME=$(jq -r '.name' "$POKEMON_FILE")
+        HEIGHT=$(jq -r '.height /10.0' "$POKEMON_FILE")
+        WEIGHT=$(jq -r '.weight / 10.0' "$POKEMON_FILE")
+    fi
+    awk -v name="$NAME" -v height="$HEIGHT" -v weight="$WEIGHT" 'BEGIN{
+        print name "," height "," weight}'>>"$OUTPUT_FILE"      
+done
+
+
+awk -F',' 'NR > 1 {sum1 += $2; sum2 += $3; count++} END {if (count > 0) printf("Average Height: %.2f m\nAverage Weight 3: %.2f kg\n", sum1/count, sum2/count)}' "$OUTPUT_FILE"
