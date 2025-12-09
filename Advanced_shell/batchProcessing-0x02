@@ -9,4 +9,7 @@ for POKEMON in "${POKEMONS[@]}"; do
     echo "Fetching data for $POKEMON"
     OUTPUT_FILE="./pokemon_data/$POKEMON.json"
     source ./apiAutomation-0x00
+    if [ "$response" -eq 429 ]; then
+        sleep 1
+    fi
 done
