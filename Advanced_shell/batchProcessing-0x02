@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# source ./apiAutomation-0x00
+
+# pokemons=$(jq -r '.results[]["name"]' data.json)
+POKEMONS=( Bulbasaur Ivysaur Venusaur Charmander Charmeleon )
+
+for POKEMON in "${POKEMONS[@]}"; do
+    echo "Fetching data for $POKEMON"
+    OUTPUT_FILE="./pokemon_data/$POKEMON.json"
+    source ./apiAutomation-0x00
+done
+
